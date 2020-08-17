@@ -1,32 +1,47 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose =  require('mongoose');
+const Leader = require('../models/leader')
 
 const leaderRoute = express.Router();
 
 leaderRoute.use(bodyParser.json());
 leaderRoute.route('/')
-.all( (req,res,next) => {
-    res.statusCode = 200
-    res.setHeader('Content_Types', 'text/plain');
-    next();
-})
-
 .get(( req,res,next ) => {
-    res.end('Get Req is here from leaderRoute route')
+    Leader.find({})
+    .then((leader) => {
+      res.statusCode = 200
+    res.setHeader('Content_Types', 'text/plain');
+    res.json(leader);
+    },(err) => next(err));
 })
 
 .post( (req , res, next) => {
-    res.end('Name attach in req is '+ req.body.name);
-});
-leaderRoute.route('/:leaderId')
-.all( (req, res, next) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  next();
+    Leader.create(req.body).then((leader) => {
+      res.statusCode = 200
+    res.setHeader('Content_Types', 'text/plain');
+    res.json(leader);
+    },(err) => next(err));
+})
+.put((req,res,next) => {
+  res.statusCode = 403
+  res.end('Put Do not work in Leader');
+})
+.delete((req,res,next) => {
+  Leader.remove({}).then((leader) => {
+    res.statusCode = 200
+    res.setHeader('Content_Types', 'text/plain');
+    res.json(leader);
+  },(err) =>  next(err));
 })
 
+leaderRoute.route('/:leaderId')
 .get((req,res,next) => {
-    res.end('Wills send details of the Leader: ' + req.params.leaderId +' to you!');
+    Leader.findById(req.params.leaderId).then((leader) => {
+      res.statusCode = 200
+    res.setHeader('Content_Types', 'text/plain');
+    res.json(leader);
+    },(err) => next(err));
 })
 
 .post((req, res, next) => {
@@ -35,13 +50,19 @@ leaderRoute.route('/:leaderId')
 })
 
 .put( (req, res, next) => {
-  res.write('Updating the Leader: ' + req.params.leaderId + '\n');
-  res.end('Will update the Leader: ' + req.body.name + 
-        ' with details: ' + req.body.description);
+  Leader.findByIdAndUpdate(req.params.leaderId,{ $set : req.body} , { new:true}).then((leader) => {
+    res.statusCode = 200
+    res.setHeader('Content_Types', 'text/plain');
+    res.json(leader);
+  },(err) => next(err));
 })
 
 .delete( (req, res, next) => {
-    res.end('Deleting Leader: ' + req.params.leaderId);
+    Leader.findByIdAndRemove(req.params.leaderId).then((leader) => {
+      res.statusCode = 200
+    res.setHeader('Content_Types', 'text/plain');
+    res.json(leader);
+    },(err) => next(err));
 });
 
 

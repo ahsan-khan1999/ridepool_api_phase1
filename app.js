@@ -11,6 +11,8 @@ var leaderRoute = require('./routes/leaderRoute')
 var promotionRoute = require('./routes/promotionRoute')
 const mongoose = require('mongoose');
 const Dishes = require('./models/dishes');
+const promotion = require('./models/promotion');
+const Leader = require('./models/leader');
 
 const url = 'mongodb://localhost:27017/Readme';
 const mongo = mongoose.connect(url);
