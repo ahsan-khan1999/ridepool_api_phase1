@@ -32,6 +32,35 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+function auth(req,res,next) {
+  console.log(req.headers);
+  var authHeader = req.headers.authorization;
+
+  if(!authHeader){
+    err = new Error('Client Do Not Provide Header in Req');
+    res.setHeader('WWW-Authenticate','Basic');
+    err.status = 401
+    next(err);
+  }
+  else{
+    var auth = new Buffer(authHeader.split(' ')[1],'base64').toString().split(':');
+    if(auth[0] === 'admin' && auth[1] === 'password'){
+      next();
+    }
+    else{
+    err = new Error('Client Do Not Provide Right Username and password in Req');
+    res.setHeader('WWW-Authenticate','Basic');
+    err.status = 401
+    next(err);
+    }
+  }
+
+}
+
+
+app.use(auth);
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
