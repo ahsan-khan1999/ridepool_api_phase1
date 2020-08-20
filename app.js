@@ -8,7 +8,7 @@ var fileStore = require('session-file-store')(session);
 
 var passport = require('passport');
 var authenticate = require('./authenticate');
-
+var config = require('./config');
 
 
 var indexRouter = require('./routes/index');
@@ -21,7 +21,7 @@ const Dishes = require('./models/dishes');
 const promotion = require('./models/promotion');
 const Leader = require('./models/leader');
 
-const url = 'mongodb://localhost:27017/Readme';
+const url = config.mongoUrl;
 const mongo = mongoose.connect(url);
 
 mongo.then((db) => {
@@ -40,39 +40,39 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(''));
 
-app.use(session({
-  name: 'new-session',
-  secret:'13458-hgjfd-uytru-84645',
-  saveUninitialized:false,
-  resave:false,
-  store: new fileStore()
-}));
+// app.use(session({
+//   name: 'new-session',
+//   secret:'13458-hgjfd-uytru-84645',
+//   saveUninitialized:false,
+//   resave:false,
+//   store: new fileStore()
+// }));
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-function auth(req,res,next) {
-  console.log(req.session);
+// function auth(req,res,next) {
+//   console.log(req.session);
 
-  if(!req.user){
-      err = new Error('Client Do Not Provide Header in Req');
-      err.status = 401
-      return next(err);
-    }
-  else{
-    next();
+//   if(!req.user){
+//       err = new Error('Client Do Not Provide Header in Req');
+//       err.status = 401
+//       return next(err);
+//     }
+//   else{
+//     next();
     
-  }
+//   }
 
 
   
 
-}
-// express session enables us to track user activity
+// }
+// // express session enables us to track user activity
 
-app.use(auth);
+// app.use(auth);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
