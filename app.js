@@ -16,6 +16,7 @@ var usersRouter = require('./routes/users');
 var route = require('./routes/route')
 var leaderRoute = require('./routes/leaderRoute')
 var promotionRoute = require('./routes/promotionRoute')
+var uploadRoute = require('./routes/uploadRoute')
 const mongoose = require('mongoose');
 const Dishes = require('./models/dishes');
 const promotion = require('./models/promotion');
@@ -28,6 +29,16 @@ mongo.then((db) => {
   console.log('Connected TO DB!')
 }, (err) => console.log(err));
 var app = express();
+
+app.all('*', (req, res, next) => {
+  if (req.secure) {
+    return next();
+  }
+  else {
+    res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
+    next();
+  }
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -63,11 +74,11 @@ app.use('/users', usersRouter);
 //     }
 //   else{
 //     next();
-    
+
 //   }
 
 
-  
+
 
 // }
 // // express session enables us to track user activity
@@ -76,18 +87,19 @@ app.use('/users', usersRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/dishes',route)
-app.use('/leaders',leaderRoute);
-app.use('/promos',promotionRoute);
+app.use('/dishes', route)
+app.use('/leaders', leaderRoute);
+app.use('/promos', promotionRoute);
+app.use('/imageUpload', uploadRoute);
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

@@ -9,7 +9,7 @@ const ExtractToken = require('passport-jwt').ExtractJwt;
 
 exports.local = passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser()); // this will fulfile support for session in user
-passport.deserializeUser(User.deserializeUser());
+passport.deserializeUser(User.deserializeUser()); // this will add user in req obj req.user 
 
 
 module.exports.getToken = function(user){
