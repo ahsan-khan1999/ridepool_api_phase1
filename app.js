@@ -13,14 +13,9 @@ var config = require('./config');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var route = require('./routes/route')
-var leaderRoute = require('./routes/leaderRoute')
-var promotionRoute = require('./routes/promotionRoute')
+
 var uploadRoute = require('./routes/uploadRoute')
 const mongoose = require('mongoose');
-const Dishes = require('./models/dishes');
-const promotion = require('./models/promotion');
-const Leader = require('./models/leader');
 
 const url = config.mongoUrl;
 const mongo = mongoose.connect(url);
@@ -30,15 +25,15 @@ mongo.then((db) => {
 }, (err) => console.log(err));
 var app = express();
 
-app.all('*', (req, res, next) => {
-  if (req.secure) {
-    return next();
-  }
-  else {
-    res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
-    next();
-  }
-})
+// app.all('*', (req, res, next) => {
+//   if (req.secure) {
+//     return next();
+//   }
+//   else {
+//     res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
+//     next();
+//   }
+// })
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -87,9 +82,6 @@ app.use('/users', usersRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/dishes', route)
-app.use('/leaders', leaderRoute);
-app.use('/promos', promotionRoute);
 app.use('/imageUpload', uploadRoute);
 
 

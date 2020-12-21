@@ -24,25 +24,26 @@ const uploadFile = multer({ storage: diskStorage, fileFilter: imageFilter });
 const uploadRoute = express.Router()
 uploadRoute.use(bodyParser.json());
 
-
+// cors.corsWithOptions,
 uploadRoute.route('/')
-.options(cors.corsWithOptions,(req,res) => res.statusCode(200))
-    .get(cors.cors,authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+.options((req,res) => res.statusCode(200))
+// cors.cors,
+    .get(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         res.statusCode = 403
         res.end('Get Operation On This Route Is Not Valid')
 
     })
-    .put(cors.corsWithOptions,authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    .put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         res.statusCode = 403
         res.end('Put Operation On This Route Is Not Valid')
 
     })
-    .delete(cors.corsWithOptions,authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         res.statusCode = 403
         res.end('delete Operation On This Route Is Not Valid')
 
     })
-    .post(cors.corsWithOptions,authenticate.verifyUser, authenticate.verifyAdmin, uploadFile.single('imageFile'), (req, res, next) => {
+    .post(authenticate.verifyUser, authenticate.verifyAdmin, uploadFile.single('imageFile'), (req, res, next) => {
         res.statusCode = 200
         res.setHeader('Content_Type', 'application/json')
         res.json(req.file);
